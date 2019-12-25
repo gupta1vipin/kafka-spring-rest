@@ -32,10 +32,10 @@ public class KafkaMessagePoller extends KafkaAwareController {
 
 		Consumer<String, Object> consumer = consumerFactory.createConsumer();
 		
-		consumer.subscribe(Collections.singletonList("sampleTopic"));
+		consumer.subscribe(Collections.singletonList(topic));
 		
 		// poll messages from last 10 days
-		ConsumerRecords<String, Object> consumerRecords = consumer.poll(Duration.ofDays(10));
+		ConsumerRecords<String, Object> consumerRecords = consumer.poll(Duration.ofMinutes(1));
 
 		// print on console or send back as a string/json. Feel free to change controller function implementation for ResponseBody
 		consumerRecords.forEach(action -> {
