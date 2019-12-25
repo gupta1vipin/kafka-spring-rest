@@ -1,5 +1,7 @@
 package com.hybriscx.demo.kafka.kafkademo.producer;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
@@ -12,7 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hybriscx.demo.kafka.kafkademo.KafkaAwareController;
 
 @RestController
-public class KafkaMessageProducer extends KafkaAwareController{
+public class KafkaMessageProducer{
+	
+	@Autowired
+	KafkaTemplate<String, String> kafkaTemplate;
+
+	public KafkaTemplate<String, String> getKafkaTemplate() {
+		return kafkaTemplate;
+	}
 
 	@RequestMapping(value = "/producer/publish-message/{topic}", method = { RequestMethod.POST, RequestMethod.GET })
 	public String publishMessage(@PathVariable String topic, @RequestBody String data) {
@@ -20,19 +29,11 @@ public class KafkaMessageProducer extends KafkaAwareController{
 		return "Published succcessfully to Kafka";
 	}
 	
-	
-	@RequestMapping(value = "/producer/publish-message-with-keyu/{topic}", method = { RequestMethod.POST, RequestMethod.GET })
-	public String publishMessageWithKey(@PathVariable String topic, @RequestBody String data) {
-		getKafkaTemplate().send(topic, data);
-		return "Published succcessfully to Kafka";
-	}
-	
-	
 	@RequestMapping(value = "/producer/publish-message-status/{topic}", method = { RequestMethod.POST, RequestMethod.GET })
 	public String pubishMessageAndCheckStatus(@PathVariable String topic, @RequestBody String data) {
 		
-		ListenableFuture<SendResult<String, String>> future = getKafkaTemplate().send(topic, data);
-				
+		//ListenableFuture<SendResult<String, String>> future = getKafkaTemplate().send(topic, data);
+		ListenableFuture<SendResult<String, String>> future = getKafkaTemplate().send(topic, "myKey1", data);		
 		future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
 
 		    @Override
